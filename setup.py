@@ -25,8 +25,8 @@ setup_requirements = [ ]
 test_requirements = [ ]
 
 setup(
-    author="Ana_Isaac_Marina",
-    author_email='marinalara170303@gmail.com',
+    author="AnaZhang_IsaacHiguchi_MarinaLara",
+    author_email='higuchi.isaac@gmail.com',
     python_requires='>=3.5',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
@@ -52,7 +52,7 @@ setup(
     setup_requires=setup_requirements,
     test_suite='tests',
     tests_require=test_requirements,
-    url='https://github.com/Marina-Lara/calvestbr',
+    url='https://github.com/IsaacHiguchi/calvestbr',
     version='0.0.1',
     zip_safe=False,
 )
