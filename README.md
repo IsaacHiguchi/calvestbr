@@ -8,7 +8,7 @@
 
 
 -   Free software: MIT license
--   Documentation: https://Marina-Lara.github.io/calvestbr
+-   Documentation: https://IsaacHiguchi.github.io/calvestbr
     
 
 ## Features
