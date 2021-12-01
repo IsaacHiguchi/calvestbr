@@ -12,7 +12,7 @@ A principal fonte de informação para a coleta das datas e avaliação das univ
 
 
 -   Free software: MIT license
--   Documentation: https://github.com/IsaacHiguchi/calvestbr#readme
+-   Documentation: https://github.com/IsaacHiguchi/calvestbr/blob/master/calvestbr/Doc.md
     
 ## 🎙INTRODUÇÃO
 
