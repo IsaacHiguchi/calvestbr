@@ -44,7 +44,7 @@ Instalar por meio de> '!pip install calvestbr'
 ## 🔗MODO DE USO
 
 
-
+Mover o arquivo CSV 'ranking_universidades' localizado no repositório 'calvestbr' (https://github.com/IsaacHiguchi/calvestbr/blob/master/ranking_universidades.csv) para a pasta que irá rodar o código<\br >
 Acessar todas as informações > ‘from calvestbr import calvestbr’<br />
 Acessar extrator especificado> ‘from calvestbr import ExtratorUEPG’
 ## Credits
