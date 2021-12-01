@@ -34,7 +34,27 @@ pd.set_option('display.max_columns', 1000)
 # ## Definindo Super Classe
 
 # In[28]:
-
+def help():
+        '''  
+        Mostra ao usuário a lista de comando possíveis e suas funcionalidades.
+        '''
+        print(f'''Lista de comandos:
+    .ObterTabela() -> extrai os dados de todas as universidades, junta ao banco de daos, trata e possibilita que sejam exbidos na tela de forma correta.
+    .ruf(\"parametro\") -> Ordena as universidade de acordo com o a RUF 2019, da mais bem colocada para a menos
+    \tparâmetros:
+    \t\t'Posição em Ensino', 'Posição em Pesquisa',  'Posição em Mercado',  'Posição em Inovação', 
+    \t\t'Posição em Internacionalização', 'Nota em Internacionalização', 'Nota'.
+    .publica() -> Exibe apenas as universidades públicas (Federais, Estaduais ou Municipais).
+    .privada() -> Exibe apenas as universidades privadas.
+    .estado(\"estado\") -> Exibe as faculdades do estado passado como parâmetro.
+    .coincide(\"etapa\") -> Mostra as universidades que tem datas coincidentes no processo passado em \"etapa\".
+    \tparâmetros:
+    \t\t'Inicio incrição', 'Fim inscrição', 'Início isenção ', 'Fim isenção', 'Primiera fase', 
+    \t\t'Primeira fase (segundo dia)', 'Segunda fase', 'Segunda fase (segundo dia)', 'Resultado'
+    .processo(\"etapa\", \"periodo\") -> Ordena a tabela da data mais antiga para a mais recente de acordo com o processo escolhido.
+    \tparâmetros: 
+    \t\tetapa = \"ins\" (inscrição), \"ise\" (Isenção), \"pri\" (Primeira fase), \"seg\" (Segunda Fase), \"res\" (Resultado)
+    \t\tperido = \"i\" (início), \"f\" (fim), \"p\" (primeiro dia), \"s\" (segundo dia)''')
 
 class CarregarPagina:
     """
@@ -128,9 +148,7 @@ class ExtratorUEPG(CarregarPagina):
         '''
         print('Carregando página UEPG...')
         self.pagina_vestibular()
-        print('Extraindo Informações...')
         self.informações_vestibular()
-        print('Armazenando dados...')
         self.atribuir_datas()
         print('concluído!')
 
@@ -217,9 +235,7 @@ class ExtratorNUCVEST(CarregarPagina):
         print('Carregando página Nucvest...')
         self.aceitarcookies()
         self.cronograma()
-        print('Extraindo Informações...')
         self.extrair_info_páginas()
-        print('Armazenando dados...')
         self.formatar_dados()
         print('concluído!')
 
@@ -288,7 +304,6 @@ class ExtratorUnifesp(CarregarPagina):
         '''
         print('Extraindo informações Unifesp...')
         self.extrair_info_páginas()
-        print('Formatando dados...')
         self.formatar_dados()
         print('Concluído!')
             
@@ -324,14 +339,11 @@ class ExtratorAcafe(CarregarPagina):
             sleep(15)
             banner = self.driver.find_element_by_xpath(f'''/html/body/div[3]/div/div/div[3]/button''')
             banner.click()
-            print('banner fechado.')
         except:
             pass
         #Aceita os cookies e abre o calendário 
         aceitar_cookies = self.driver.find_element_by_class_name(f'''btn-cookies''')
-        print('cookies aceitos.')
         abrir_calendario = self.driver.find_element_by_xpath(f'''/html/body/div[5]/div/div[2]''')
-        print('Calendário aberto.')
         sleep(5)
         aceitar_cookies.click()
         sleep(3)
@@ -384,61 +396,15 @@ class ExtratorAcafe(CarregarPagina):
         '''
         método que ao ser chamado, executa todas os anteriores.
         '''
+        print('Carregando página Acafe...')
         self.extrair_conteudo()
         self.atribuir_datas()
+        print('Concluído')
 
 
-# ## Realizando Extração
-# aqui chamamos as classes extratoras de cada universidade para cumprir suas fucionalidades.
-
-# ### UEPG
-
-# In[33]:
-
-
-uepg = ExtratorUEPG()
-uepg.extrair_informacoes()
-
-
-# ### Nucvest
-
-# In[34]:
-
-
-nucvest = ExtratorNUCVEST()
-nucvest.extrair_informacoes()
-
-
-# ### Unifesp
-
-# In[35]:
-
-
-unifesp = ExtratorUnifesp()
-unifesp.extrair_informacoes()
-
-
-# ### Acafe
-
-# In[36]:
-
-
-acafe = ExtratorAcafe()
-acafe.extrair_informacoes()
-
-
-# # Incluir informações no dataset
-# 
-# Nessa etapa adicionamos as informações coletadas à nossa tabela principal.
-# 
-# 
 
 # ## Definindo classe
 # Aqui foi definida a classe que reliza o trabalho de incluir os novos dados à tabela principal.
-
-# In[37]:
-
-
 class ObterDados:
     ''' 
     Adicona os dados coletados à tabela principla
@@ -453,10 +419,10 @@ class ObterDados:
         self.ranking = pd.read_csv(file, dtype = str, encoding = 'latin-1', sep = ';')
         self.ranking.fillna('', inplace = True)
     
-    def adicionar_a_tabela(self):
+    def adicionar_a_tabela(self, acafe, uepg, unifesp, nucvest):
         ''' 
         adicona os dados coletados ao dataset
-        '''
+        ''' 
         for index, row in self.ranking.iterrows():
             if row['Extrator'] == 'ExtratorAcafe':
                 row['link site'] = acafe.url
@@ -487,30 +453,15 @@ class ObterDados:
         self.ranking.to_csv('rankingteste.csv', sep = ',', encoding = 'utf-8', index = False, quoting = csv.QUOTE_ALL)
 
 
-# ## Chamando classe
-# defini-se o objeto, e cham-se o método que incluirá os novos dados à tabela.
-
-# In[38]:
-
-
-ranking = ObterDados()
-ranking.adicionar_a_tabela()
-ranking.salvar() 
-
-
 # # <strong>Tratamento</strong>
-
 # ## Definindo Classe
 # Definimos a clase que trata todos os campos de data passando-os para o padrõa aaaa-mm-dd. É importante ressaltar que foram tratadas as exceções que encontramos durante nossa coleta de dados, mas conforme forem obtidas mais amostras a atualização desse código pode se fazer necessária.
-
-# In[39]:
-
 
 class Tratando():
     ''' 
     Classe que trata todos os campos de data passando-os para o padrõa aaaa-mm-dd
     '''
-    def __init__(self, df, colunas_data = ['Inicio incrição', 'Fim inscrição', 'Início isenção ', 'Fim isenção',
+    def __init__(self,df, colunas_data = ['Inicio incrição', 'Fim inscrição', 'Início isenção ', 'Fim isenção',
     'Primiera fase', 'Primeira fase (segundo dia)', 'Segunda fase',
     'Segunda fase (segundo dia)', 'Resultado']):
         '''  
@@ -619,18 +570,36 @@ class Tratando():
         '''
         self.df = self.df.drop(columns=['Extrator'])
         self.df.to_csv('ranking_tratado.csv', sep = ',', encoding = 'utf-8', index = False, quoting = csv.QUOTE_ALL)
-            
 
 
-# ## Chamando Classe
 
-# In[40]:
+# In[33]:
 
+class ObterTabela():
+    def __init__(self):
 
-df_completo = ranking.ranking
-df_tratado = Tratando(df_completo)
-df_tratado.tratar_datas()
-df_tratado.salvar()
+        # ## Realizando Extração
+        # aqui chamamos as classes extratoras de cada universidade para cumprir suas fucionalidades.
+        self.uepg = ExtratorUEPG()
+        self.uepg.extrair_informacoes()
+        self.nucvest = ExtratorNUCVEST()
+        self.nucvest.extrair_informacoes()
+        self.unifesp = ExtratorUnifesp()
+        self.unifesp.extrair_informacoes()
+        self.acafe = ExtratorAcafe()
+        self.acafe.extrair_informacoes()
+
+        # # Incluir informações no dataset
+        # Nessa etapa adicionamos as informações coletadas à nossa tabela principal. 
+        self.ranking = ObterDados()
+        self.ranking.adicionar_a_tabela(self.acafe, self.uepg, self.unifesp, self.nucvest)
+        self.ranking.salvar() 
+
+        # ## Chamando Classe
+        df_compl = self.ranking.ranking
+        self.df_tratado = Tratando(df_compl)
+        self.df_tratado.tratar_datas()
+        self.df_tratado.salvar()
 
 
 # # <strong>Visualização</strong>
@@ -643,7 +612,7 @@ df_tratado.salvar()
 
 
 class Ordenar():
-    def __init__(self, df, tirar_sem_datas = False):
+    def __init__(self, objname, tirar_sem_datas = False):
         '''
         Transforma os dados para ordenar a tabela de a cordo com a preferência do usuário
 
@@ -654,8 +623,9 @@ class Ordenar():
         colunas_int = armazena o nome das colunas que possuem número inteiros como dados.
         tirar_sem_datas = Caso definido como True, tira da exibição as universidades que não possuem nenhuma data referente ao processo seletivo. 
         estados = armazena  alista de estados em que as universidades da nossa tabela se encontram.
+        objname = nome dados ao objeto ao qual foi atribuida a classe ObterTabela
         '''
-        self.df = df
+        self.df = objname.df_tratado.df
         colunas_int = [
             'Nota', 'Posição em Pesquisa', 'Posição em Ensino', 'Posição em Mercado', 'Posição em Inovação', 'Posição em Internacionalização'
             ]
@@ -673,31 +643,11 @@ class Ordenar():
             self.df = self.df.dropna(how = 'all', subset = [self.colunas_data])
             self.df = self.df.fillna('')
             
-        self.estados = df.Estado.unique()
+        self.estados = self.df.Estado.unique()
         self.df = self.df.rename(columns={'metadados':'Mais Informações'})
         self.df[colunas_int] = self.df[colunas_int].astype(int)
         self.df['Nota'] = self.df['Nota'].astype(float)
         
-    def help(self):
-        '''  
-        Mostra ao usuário a lista de comando possíveis e suas funcionalidades.
-        '''
-        print(f'''Lista de comandos:
-    .ruf(\"parametro\") -> Ordena as universidade de acordo com o a RUF 2019, da mais bem colocada para a menos
-    \tparâmetros:
-    \t\t'Posição em Ensino', 'Posição em Pesquisa',  'Posição em Mercado',  'Posição em Inovação', 
-    \t\t'Posição em Internacionalização', 'Nota em Internacionalização', 'Nota'.
-    .publica() -> Exibe apenas as universidades públicas (Federais, Estaduais ou Municipais).
-    .privada() -> Exibe apenas as universidades privadas.
-    .estado(\"estado\") -> Exibe as faculdades do estado passado como parâmetro.
-    .coincide(\"etapa\") -> Mostra as universidades que tem datas coincidentes no processo passado em \"etapa\".
-    \tparâmetros:
-    \t\t'Inicio incrição', 'Fim inscrição', 'Início isenção ', 'Fim isenção', 'Primiera fase', 
-    \t\t'Primeira fase (segundo dia)', 'Segunda fase', 'Segunda fase (segundo dia)', 'Resultado'
-    .processo(\"etapa\", \"periodo\") -> Ordena a tabela da data mais antiga para a mais recente de acordo com o processo escolhido.
-    \tparâmetros: 
-    \t\tetapa = \"ins\" (inscrição), \"ise\" (Isenção), \"pri\" (Primeira fase), \"seg\" (Segunda Fase), \"res\" (Resultado)
-    \t\tperido = \"i\" (início), \"f\" (fim), \"p\" (primeiro dia), \"s\" (segundo dia)''')
 
     def ruf(self, parametro : str):
         ''' 
@@ -801,58 +751,4 @@ Use \".help()\" para verificar a lista de parâmetros possíveis para este coman
             return df_.replace({pd.NaT: ""})
         else:
             print(f'''\"{etapa}\" é uma etapa inválida.\nUse \".help()\" para verificar a lista de parâmetros possíveis para este comando.''')
-
-
-# ## Chamando Classe
-
-# In[42]:
-
-
-tabela = Ordenar(df_tratado.df, True) #escolhemos não trabalhar com as universidades que não possuem nenhuma data referente ao processo seletivo. 
-
-
-# # <strong>Utilizando FrameWork</strong>
-# <br><strong><i>O comando .help() fornece a lista de todos os comanod e parâmetros possíveis, tal como sua descrição.</i></strong>
-# 
-
-# In[43]:
-
-
-tabela.help()
-
-
-# In[44]:
-
-
-tabela.ruf('Posição em Ensino')
-
-
-# In[45]:
-
-
-tabela.publica()
-
-
-# In[46]:
-
-
-tabela.privada()
-
-
-# In[47]:
-
-
-tabela.estado('SP')
-
-
-# In[48]:
-
-
-tabela.processo('ins', 'i')
-
-
-# In[49]:
-
-
-tabela.coincide('Primiera fase')
 
