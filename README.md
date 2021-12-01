@@ -14,11 +14,9 @@ A principal fonte de informação para a coleta das datas e avaliação das univ
 -   Free software: MIT license
 -   Documentation: https://IsaacHiguchi.github.io/calvestbr
     
-
-## Features
-
--   TODO
+## Documentação
 
 ## Credits
+Esse pacote python foi criado por mim (Isaac Higuchi), Ana Zhang e Marina Lara no 1° período do curso de Ciência de Dados e Inteligência Artificial da PUC-SP.
 
-This package was created with [Cookiecutter](https://github.com/cookiecutter/cookiecutter) and the [giswqs/pypackage](https://github.com/giswqs/pypackage) project template.
+Esse pacote foi criado com [Cookiecutter](https://github.com/cookiecutter/cookiecutter) e o template [giswqs/pypackage](https://github.com/giswqs/pypackage).
